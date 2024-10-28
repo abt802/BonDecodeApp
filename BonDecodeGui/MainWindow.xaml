@@ -1,0 +1,79 @@
+﻿<Window x:Class="BonDecodeGui.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:local="clr-namespace:BonDecodeGui"
+        mc:Ignorable="d"
+        Title="BonDecodeGui" Width="500" Height="400" MinWidth="400" MinHeight="300"
+        ResizeMode="CanResizeWithGrip"
+        >
+
+    <Window.DataContext>
+        <local:MainViewModel/>
+    </Window.DataContext>
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Closing">
+            <i:InvokeCommandAction Command="{Binding SaveSettingsCommand}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    
+    <Grid Margin="4">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="130"/>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="30"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="*" MinHeight="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="20"/>
+        </Grid.RowDefinitions>
+        <Label Grid.Row="0" Grid.Column="0" x:Name="DecodeDllLabel" Content="Decode DLL" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="10,0" />
+        <ComboBox Grid.Row="0" Grid.Column="1" x:Name="DecodeDllComboBox" IsEditable="False"  VerticalAlignment="Center" Width="200" HorizontalAlignment="Left"
+                  SelectedValue="{Binding DecodeDll}"
+                  ItemsSource="{Binding DllCollection}"
+                  />
+        <Label Grid.Row="1" Grid.Column="0" x:Name="TargetFilesLabel" Content="Target Files" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="10,0" />
+        <TextBox Grid.Row="1" Grid.Column="1" x:Name="TargetsTextBox" AcceptsReturn="True" HorizontalAlignment="Stretch" TextWrapping="Wrap" Text="{Binding TargetFiles}" 
+                 VerticalAlignment="Stretch" 
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 ScrollViewer.VerticalScrollBarVisibility="Auto"
+                 AllowDrop="True" PreviewDragOver="TargetsTextBox_PreviewDragOver" Drop="TargetsTextBox_Drop" 
+                 />
+        <Button Grid.Row="1" Grid.Column="2" Margin="2" x:Name="OpenFileButton" Content="..." VerticalAlignment="Top" Click="OpenFileButton_Click" />
+
+        <Label Grid.Row="2" Grid.Column="0" x:Name="DestinationFolderLabel" Content="Destination Folder" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="10,0"/>
+        <TextBox Grid.Row="2" Grid.Column="1" x:Name="DestinationFolderTextBox" HorizontalAlignment="Stretch" TextWrapping="Wrap" Text="{Binding DestinationFolder}" VerticalAlignment="Center" 
+                 AllowDrop="True" PreviewDragOver="DestinationFolderTextBox_PreviewDragOver" Drop="DestinationFolderTextBox_Drop"
+                 />
+        <Button Grid.Row="2" Grid.Column="2" x:Name="OpenDestinationButton" Margin="2" Content="..." VerticalAlignment="Center" Click="OpenDestinationButton_Click"/>
+
+        <CheckBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" x:Name="AppendSuffixCheckBox" IsChecked="{Binding AppendSuffix}" Content="Append suffix for decoded files" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10,0"/>
+
+        <Label Grid.Row="4" Grid.Column="0" x:Name="SuffixLabel" Content="Suffix" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+        <TextBox Grid.Row="4" Grid.Column="1" x:Name="SuffixTextBox" HorizontalAlignment="Left"  TextWrapping="Wrap" Text="{Binding Suffix}" VerticalAlignment="Center" Width="120"
+                 IsEnabled="{Binding AppendSuffix}"/>
+
+        <CheckBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3" x:Name="HideShellCheckBox" IsChecked="{Binding HideShell}" Content="Hide Shell window" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0"/>
+    
+        <StackPanel Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3" Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button Command="{Binding DecodeCommand}" Content="Decode" Width="100" Height="26" VerticalAlignment="Center" Margin="0,0,80,0"/>
+            <Button Command="{Binding DecodeCancelCommand}" IsEnabled="{Binding DecodeCommand.CanBeCanceled}" Content="Cancel" Width="100" Height="26" VerticalAlignment="Center" />
+        </StackPanel>
+
+        <StatusBar Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="3" VerticalAlignment="Bottom" Background="WhiteSmoke">
+            <StatusBarItem>
+                <TextBlock Text="{Binding CurrentStatus}" />
+            </StatusBarItem>
+        </StatusBar>
+
+    </Grid>
+</Window>
