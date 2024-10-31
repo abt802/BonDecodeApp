@@ -5,7 +5,9 @@ VisualStudioVersion = 17.11.35303.130
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BonDecodeApp", "BonDecodeApp\BonDecodeApp.vcxproj", "{28647C77-E74A-4340-9F5D-B757757158B6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BonDecodeGui", "BonDecodeGui\BonDecodeGui.csproj", "{17AD0144-D0E9-45BC-927F-0AD22CF36C7A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BonDecodeGui", "BonDecodeGui\BonDecodeGui.csproj", "{17AD0144-D0E9-45BC-927F-0AD22CF36C7A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartCardCheckerGui", "SmartCardCheckerGui\SmartCardCheckerGui.csproj", "{F333C163-6023-4D51-9431-0A5F27846A6C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +43,18 @@ Global
 		{17AD0144-D0E9-45BC-927F-0AD22CF36C7A}.Release|x64.Build.0 = Release|Any CPU
 		{17AD0144-D0E9-45BC-927F-0AD22CF36C7A}.Release|x86.ActiveCfg = Release|Any CPU
 		{17AD0144-D0E9-45BC-927F-0AD22CF36C7A}.Release|x86.Build.0 = Release|Any CPU
+		{F333C163-6023-4D51-9431-0A5F27846A6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F333C163-6023-4D51-9431-0A5F27846A6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F333C163-6023-4D51-9431-0A5F27846A6C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F333C163-6023-4D51-9431-0A5F27846A6C}.Debug|x64.Build.0 = Debug|Any CPU
+		{F333C163-6023-4D51-9431-0A5F27846A6C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F333C163-6023-4D51-9431-0A5F27846A6C}.Debug|x86.Build.0 = Debug|Any CPU
+		{F333C163-6023-4D51-9431-0A5F27846A6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F333C163-6023-4D51-9431-0A5F27846A6C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F333C163-6023-4D51-9431-0A5F27846A6C}.Release|x64.ActiveCfg = Release|Any CPU
+		{F333C163-6023-4D51-9431-0A5F27846A6C}.Release|x64.Build.0 = Release|Any CPU
+		{F333C163-6023-4D51-9431-0A5F27846A6C}.Release|x86.ActiveCfg = Release|Any CPU
+		{F333C163-6023-4D51-9431-0A5F27846A6C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
