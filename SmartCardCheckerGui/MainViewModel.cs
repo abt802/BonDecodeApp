@@ -12,8 +12,7 @@ using CommunityToolkit.Mvvm.Messaging.Messages;
 
 namespace SmartCardCheckerGui
 {
-    [INotifyPropertyChanged]
-    internal partial class MainViewModel
+    internal partial class MainViewModel : ObservableObject
     {
         [ObservableProperty]
         private ObservableCollection<string> _readers = new ObservableCollection<string>();
@@ -36,7 +35,6 @@ namespace SmartCardCheckerGui
         private SmartCardChecker scc = new();
 
 
-
         [RelayCommand]
         public async Task CheckAsync()
         {
@@ -48,77 +46,78 @@ namespace SmartCardCheckerGui
             }
             Output += Environment.NewLine;
 
-            res = await Task.Run(() => scc.CardReaders(IgnoreWindowsHello));
-            Output += res.sb.ToString();
-            if (res.result == false)
+            try
             {
-                return;
-            }
-            Output += Environment.NewLine;
-
-            res = await Task.Run(scc.GetStatusChange);
-            Output += res.sb.ToString();
-            if (res.result == false)
-            {
-                return;
-            }
-            Output += "----" + Environment.NewLine;
-
-            (TransmitType transmit, bool check)[] transmitChecks = 
-            [
-                (TransmitType.Felica, FelicaCheck),
-                (TransmitType.ACAS, AcasCheck),
-                (TransmitType.BCAS, BcasCheck),
-            ];
-
-            scc.sb.Indent += 2;
-            foreach (var reader in scc.CardContextDict.Keys)
-            {
-                Output += $"{reader}:" + Environment.NewLine;
-                res = await Task.Run(() => scc.Connect(reader));
+                res = await Task.Run(() => scc.CardReaders(IgnoreWindowsHello));
                 Output += res.sb.ToString();
                 if (res.result == false)
                 {
-                    Output += "----" + Environment.NewLine;
-                    continue;
+                    return;
                 }
+                Output += Environment.NewLine;
 
-                res = await Task.Run(() => scc.CardStatus(reader));
+                res = await Task.Run(scc.GetStatusChange);
                 Output += res.sb.ToString();
                 if (res.result == false)
                 {
-                    res = await Task.Run(() => scc.Disconnect(reader));
-                    Output += "----" + Environment.NewLine;
-                    continue;
+                    return;
                 }
-
-                foreach (var tc in transmitChecks)
-                {
-                    if (tc.check)
-                    {
-                        res = await Task.Run(() => scc.Transmit(reader, tc.transmit));
-                        Output += res.sb.ToString();
-                        //if (res.result == false)
-                        //{
-                        //    Output += "--" + Environment.NewLine;
-                        //    break;
-                        //}
-                    }
-                }
-
-                res = await Task.Run(() => scc.Disconnect(reader));
-                Output += res.sb.ToString();
-
                 Output += "----" + Environment.NewLine;
+
+                (TransmitType transmit, bool check)[] transmitChecks =
+                [
+                    (TransmitType.Felica, FelicaCheck),
+                    (TransmitType.ACAS, AcasCheck),
+                    (TransmitType.BCAS, BcasCheck),
+                ];
+
+                scc.sb.Indent += 2;
+                foreach (var reader in scc.CardContextDict.Keys)
+                {
+                    Output += $"{reader}:" + Environment.NewLine;
+                    res = await Task.Run(() => scc.Connect(reader));
+                    Output += res.sb.ToString();
+                    if (res.result == false)
+                    {
+                        Output += "----" + Environment.NewLine;
+                        continue;
+                    }
+
+                    res = await Task.Run(() => scc.CardStatus(reader));
+                    Output += res.sb.ToString();
+                    if (res.result == false)
+                    {
+                        res = await Task.Run(() => scc.Disconnect(reader));
+                        Output += "----" + Environment.NewLine;
+                        continue;
+                    }
+
+                    foreach (var tc in transmitChecks)
+                    {
+                        if (tc.check)
+                        {
+                            res = await Task.Run(() => scc.Transmit(reader, tc.transmit));
+                            Output += res.sb.ToString();
+                        }
+                    }
+
+                    res = await Task.Run(() => scc.Disconnect(reader));
+                    Output += res.sb.ToString();
+
+                    Output += "----" + Environment.NewLine;
+                }
+                scc.sb.Indent -= 2;
             }
-            scc.sb.Indent -= 2;
+            catch (Exception ex)
+            {
+                scc.ReleaseSCS();
+                Output += ex.Message;
+                return;
+            }
 
             res = scc.ReleaseSCS();
             Output += res.sb.ToString();
         }
-
-
-
 
     }
 }

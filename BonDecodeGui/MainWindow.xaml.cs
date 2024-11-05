@@ -44,8 +44,11 @@ namespace BonDecodeGui
             };
             if (ofd.ShowDialog() == true)
             {
-                TargetsTextBox.Text = string.Join(Environment.NewLine, ofd.FileNames);
-                TargetsTextBox.GetBindingExpression(TextBox.TextProperty).UpdateSource();
+                if (!string.IsNullOrEmpty(TargetsTextBox.Text))
+                {
+                    TargetsTextBox.Text += Environment.NewLine;
+                }
+                TargetsTextBox.Text += string.Join(Environment.NewLine, ofd.FileNames);
             }
         }
 
@@ -65,7 +68,6 @@ namespace BonDecodeGui
                 if (path != null)
                 {
                     DestinationFolderTextBox.Text = path;
-                    DestinationFolderTextBox.GetBindingExpression(TextBox.TextProperty).UpdateSource();
                 }
             }
         }
@@ -84,13 +86,17 @@ namespace BonDecodeGui
             e.Handled = true;
 
         }
+
         private void TargetsTextBox_Drop(object sender, DragEventArgs e)
         {
             var fileNames = e.Data.GetData(DataFormats.FileDrop, true) as string[];
             if (fileNames != null)
             {
-                TargetsTextBox.Text = string.Join(Environment.NewLine, fileNames);
-                TargetsTextBox.GetBindingExpression(TextBox.TextProperty).UpdateSource();
+                if (!string.IsNullOrEmpty(TargetsTextBox.Text))
+                {
+                    TargetsTextBox.Text += Environment.NewLine;
+                }
+                TargetsTextBox.Text += string.Join(Environment.NewLine, fileNames);
             }
         }
 
@@ -121,8 +127,27 @@ namespace BonDecodeGui
                 {
                     DestinationFolderTextBox.Text = Path.GetDirectoryName(folder);
                 }
-                DestinationFolderTextBox.GetBindingExpression(TextBox.TextProperty).UpdateSource();
             }
+        }
+
+        private void ClearButton_Click(object sender, RoutedEventArgs e)
+        {
+            TargetsTextBox.Text = string.Empty;
+        }
+
+        private void TargetsTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            TargetsTextBox.GetBindingExpression(TextBox.TextProperty).UpdateSource();
+        }
+
+        private void DestinationFolderTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            DestinationFolderTextBox.GetBindingExpression(TextBox.TextProperty).UpdateSource();
+        }
+
+        private void SuffixTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            SuffixTextBox.GetBindingExpression(TextBox.TextProperty).UpdateSource();
         }
     }
 }

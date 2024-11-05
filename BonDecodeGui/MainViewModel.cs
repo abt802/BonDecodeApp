@@ -19,15 +19,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileSystemGlobbing;
 using Microsoft.Extensions.FileSystemGlobbing.Abstractions;
 using CommunityToolkit.Mvvm.Messaging;
-using System.Runtime.CompilerServices;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.Windows.Input;
 
 namespace BonDecodeGui
 {
 
-    [INotifyPropertyChanged]
-    internal partial class MainViewModel 
+    internal partial class MainViewModel : ObservableObject
     {
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(DecodeCommand))]
@@ -117,6 +113,7 @@ namespace BonDecodeGui
         {
             try
             {
+                bool aborted = false;
                 var files = TargetFiles.Split(Environment.NewLine);
                 foreach (var target in files)
                 {
@@ -174,16 +171,39 @@ namespace BonDecodeGui
                             myProc.BeginOutputReadLine();
                             myProc.BeginErrorReadLine();
                         }
-                        await myProc.WaitForExitAsync();
+                        //await myProc.WaitForExitAsync();
+                        await MonitorProcessAsync(myProc, token);
+                        if (myProc.ExitCode != 0)
+                        {
+                            aborted = true;
+                            break;
+                        }
                     }
                 }
-                var message = token.IsCancellationRequested ? "Decode Canceled" : "Decode Finish";
+                var message = (token.IsCancellationRequested || aborted) ? "Decode Aborted" : "Decode Finish";
                 WeakReferenceMessenger.Default.Send<ProcessMessage>(new(message));
+            }
+            catch(OperationCanceledException)
+            {
+                WeakReferenceMessenger.Default.Send<ProcessMessage>(new("Decode Aborted", false));
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.ToString());
                 WeakReferenceMessenger.Default.Send<ProcessMessage>(new (ex.ToString(), false));
+            }
+        }
+
+        private async Task MonitorProcessAsync(Process proc, CancellationToken token)
+        {
+            while (!proc.HasExited)
+            {
+                await Task.Delay(100);
+                if (token.IsCancellationRequested)
+                {
+                    proc.Kill();
+                    throw new OperationCanceledException();
+                }
             }
         }
 
